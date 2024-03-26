@@ -1,0 +1,11 @@
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\bin\Debug\ShredderGUI.exe.config
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\bin\Debug\ShredderGUI.exe
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\bin\Debug\ShredderGUI.pdb
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.csproj.AssemblyReference.cache
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.csproj.SuggestedBindingRedirects.cache
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.Form1.resources
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.Properties.Resources.resources
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.csproj.GenerateResource.cache
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.csproj.CoreCompileInputs.cache
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.exe
+C:\Users\Laur\source\repos\ShredderGUI\ShredderGUI\obj\Debug\ShredderGUI.pdb
