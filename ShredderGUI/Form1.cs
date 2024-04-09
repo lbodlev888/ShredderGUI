@@ -3,7 +3,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.Threading;
-using System.IO.MemoryMappedFiles;
 
 namespace ShredderGUI
 {
@@ -26,35 +25,26 @@ namespace ShredderGUI
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void WriteData(int times)
         {
-            using(var stream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite))
+            if(filePath == string.Empty)
             {
-                int BUFFER_SIZE = (int)stream.Length;
-                using(var rng = new RNGCryptoServiceProvider())
-                {
-                    for(int i = 1; i <= int.Parse(textBox2.Text); i++)
-                    {
-                        byte[] randomData = new byte[BUFFER_SIZE];
-                        rng.GetBytes(randomData);
-                        listBox1.Items.Add($"Shredding {i}/{textBox2.Text} (" + Convert.ToBase64String(randomData).Substring(0, 10) + ")");
-                        stream.Write(randomData, 0, randomData.Length);
-                    }
-                }
+                MessageBox.Show("File was not selected");
+                return;
             }
-            /*//https://stackoverflow.com/questions/57017270/unable-to-read-video-file-greater-than-2gb
             int BUFFER_SIZE = File.ReadAllBytes(filePath).Length;
-            using(var rng = new RNGCryptoServiceProvider())
+            using (var rng = new RNGCryptoServiceProvider())
             {
-                for(int i = 1; i <= int.Parse(textBox2.Text); i++)
+                for (int i = 1; i <= times; i++)
                 {
                     byte[] randomData = new byte[BUFFER_SIZE];
                     rng.GetBytes(randomData);
-                    listBox1.Items.Add($"Shredding {i}/{textBox2.Text} (" + Convert.ToBase64String(randomData).Substring(0, 10) + ")");
+                    Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, $"Shredding {i}/{times} (" + Convert.ToBase64String(randomData).Substring(0, 10) + ")")));
                     File.WriteAllBytes(filePath, randomData);
                 }
-            }*/
-            if(checkBox1.Checked)
+            }
+
+            if (checkBox1.Checked)
             {
                 string dirPath = Path.GetDirectoryName(filePath) + "\\";
                 for (int i = filePath.Length; i > 0; i--)
@@ -63,11 +53,17 @@ namespace ShredderGUI
                     for (int j = 0; j < i; j++) final += "0";
                     File.Move(filePath, final);
                     filePath = final;
-                    listBox1.Items.Add("File renamed to " + final);
+                    Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "File renamed to " + final)));
                 }
                 File.Delete(filePath);
-                listBox1.Items.Add(filePath + " The file was removed successfully");
+                Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, filePath + " The file was removed successfully")));
             }
+            Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "Finished!!!")));
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Thread th = new Thread(() => WriteData(int.Parse(textBox2.Text)));
+            th.Start();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -75,19 +71,19 @@ namespace ShredderGUI
             if(openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 filePath = openFileDialog1.FileName;
-                listBox1.Items.Add("File selected => " + filePath);
+                listBox1.Items.Insert(0, "File selected => " + filePath);
             }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked) listBox1.Items.Add("The file will be deleted");
-            else listBox1.Items.Add("The file won't be deleted");
+            if (checkBox1.Checked) listBox1.Items.Insert(0, "The file will be deleted");
+            else listBox1.Items.Insert(0, "The file won't be deleted");
         }
 
         private void textBox2_Leave(object sender, EventArgs e)
         {
-            if (textBox2.Text.Length > 0) listBox1.Items.Add("Number of iterations => " + textBox2.Text);
+            if (textBox2.Text.Length > 0) listBox1.Items.Insert(0, "Number of iterations => " + textBox2.Text);
         }
     }
 }
