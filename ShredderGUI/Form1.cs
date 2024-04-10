@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using System.Security.Cryptography;
-using System.Threading;
 
 namespace ShredderGUI
 {
     public partial class Form1 : Form
     {
-        string filePath = string.Empty;
+        //string filePath = string.Empty;
         public Form1()
         {
             InitializeComponent();
@@ -25,40 +25,44 @@ namespace ShredderGUI
             }
         }
 
-        void WriteData(int times)
+        private void WriteData(int times)
         {
-            if(filePath == string.Empty)
+            foreach(string file in openFileDialog1.FileNames)
             {
-                MessageBox.Show("File was not selected");
-                return;
-            }
-            int BUFFER_SIZE = File.ReadAllBytes(filePath).Length;
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                for (int i = 1; i <= times; i++)
+                string filePath = file;
+                if (filePath == string.Empty)
                 {
-                    byte[] randomData = new byte[BUFFER_SIZE];
-                    rng.GetBytes(randomData);
-                    Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, $"Shredding {i}/{times} (" + Convert.ToBase64String(randomData).Substring(0, 10) + ")")));
-                    File.WriteAllBytes(filePath, randomData);
+                    MessageBox.Show("File was not selected");
+                    return;
                 }
-            }
+                int BUFFER_SIZE = File.ReadAllBytes(filePath).Length;
+                using (var rng = new RNGCryptoServiceProvider())
+                {
+                    for (int i = 1; i <= times; i++)
+                    {
+                        byte[] randomData = new byte[BUFFER_SIZE];
+                        rng.GetBytes(randomData);
+                        Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, $"Shredding {i}/{times} (" + Convert.ToBase64String(randomData).Substring(0, 10) + ")")));
+                        File.WriteAllBytes(filePath, randomData);
+                    }
+                }
 
-            if (checkBox1.Checked)
-            {
-                string dirPath = Path.GetDirectoryName(filePath) + "\\";
-                for (int i = filePath.Length; i > 0; i--)
+                if (checkBox1.Checked)
                 {
-                    string final = dirPath;
-                    for (int j = 0; j < i; j++) final += "0";
-                    File.Move(filePath, final);
-                    filePath = final;
-                    Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "File renamed to " + final)));
+                    string dirPath = Path.GetDirectoryName(filePath) + "\\";
+                    for (int i = filePath.Length; i > 0; i--)
+                    {
+                        string final = dirPath;
+                        for (int j = 0; j < i; j++) final += "0";
+                        File.Move(filePath, final);
+                        filePath = final;
+                        Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "File renamed to " + final)));
+                    }
+                    File.Delete(filePath);
+                    Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, filePath + " The file was removed successfully")));
                 }
-                File.Delete(filePath);
-                Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, filePath + " The file was removed successfully")));
+                Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "Finished!!!")));
             }
-            Invoke((MethodInvoker)(() => listBox1.Items.Insert(0, "Finished!!!")));
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -70,8 +74,8 @@ namespace ShredderGUI
         {
             if(openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                filePath = openFileDialog1.FileName;
-                listBox1.Items.Insert(0, "File selected => " + filePath);
+                foreach(string filePath in openFileDialog1.FileNames)
+                    listBox1.Items.Insert(0, "File selected => " + filePath);
             }
         }
 
